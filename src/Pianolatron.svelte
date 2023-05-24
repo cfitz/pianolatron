@@ -54,6 +54,7 @@
   import { fade } from "svelte/transition";
   import IntervalTree from "node-interval-tree";
   import {
+    volumeCoefficient,
     bassVolumeCoefficient,
     trebleVolumeCoefficient,
     tempoCoefficient,
@@ -113,6 +114,16 @@
   let rollViewer;
   let updateTickByViewportIncrement;
   let panHorizontal;
+
+  export let assetsBase = "/";
+  export let skipWelcomeDialog = false;
+  if ( skipWelcomeDialog ) showWelcomeScreen.set(false);
+  export let autoPlay = false;
+  if ( autoPlay ) volumeCoefficient.set(0);
+  export let noLeft = false;
+  export let noRight = false;
+  export let hideAdvancedSettings = false;
+
 
   const rollListItems = catalog.map((item) => ({
     ...item,
@@ -180,7 +191,7 @@
 
   const loadRoll = (roll) => {
     appWaiting = true;
-    mididataReady = fetch(`./midi/${roll.druid}.mid`)
+    mididataReady = fetch(`${assetsBase}midi/${roll.druid}.mid`)
       .then((mididataResponse) => {
         if (mididataResponse.status === 200)
           return mididataResponse.arrayBuffer();
@@ -195,7 +206,7 @@
         currentRoll = previousRoll;
       });
 
-    metadataReady = fetch(`./json/${roll.druid}.json`)
+    metadataReady = fetch(`${assetsBase}json/${roll.druid}.json`)
       .then((metadataResponse) => {
         if (metadataResponse.status === 200) return metadataResponse.json();
         throw new Error("Error fetching metadata file! (Operation cancelled)");
@@ -284,10 +295,14 @@
     document.getElementById("loading").classList.add("fade-out");
     appLoaded = true;
   }
+  $: if (appLoaded && autoPlay ) playPauseApp(); // most browsers block the audio context autoplay. need to add something to tell users to click to enable audiocontext.
+
 </script>
+
 
 <div id="app">
   <div>
+    {#if !noLeft}
     <FlexCollapsible id="left-sidebar" width="20vw">
       <RollSelector bind:currentRoll {rollListItems} />
       {#if appReady}
@@ -300,6 +315,7 @@
         {/if}
       {/if}
     </FlexCollapsible>
+    {/if}
     <div id="roll">
       {#if appReady}
         <RollViewer
@@ -317,9 +333,11 @@
         </div>
       {/if}
     </div>
+    {#if !noRight}
     <FlexCollapsible id="right-sidebar" width="20vw" position="left">
-      <TabbedPanel {playPauseApp} {stopApp} {skipToPercentage} />
+      <TabbedPanel {playPauseApp} {stopApp} {skipToPercentage} {hideAdvancedSettings} />
     </FlexCollapsible>
+    {/if}
   </div>
   {#if $userSettings.showKeyboard && !$userSettings.overlayKeyboard}
     <div id="keyboard-container" transition:slide>
@@ -331,6 +349,7 @@
   <LoadingSpinner showLoadingSpinner={appLoaded && appWaiting} />
 </div>
 <SamplePlayer
+  url="{assetsBase}samples/"
   bind:this={samplePlayer}
   on:loading={({ detail: loadingSamples }) => {
     appWaiting = true;

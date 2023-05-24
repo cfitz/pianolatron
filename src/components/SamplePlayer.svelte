@@ -48,9 +48,10 @@
   const dispatch = createEventDispatcher();
 
   const midiSamplePlayer = new MidiPlayer.Player();
-
+  
+  export let url = "samples/";
   const piano = new Piano({
-    url: "samples/",
+    url: url,
     velocities: $sampleVelocities,
     release: true,
     pedal: true,

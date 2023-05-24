@@ -14,6 +14,9 @@
   },
   "devDependencies": {
     "@astrojs/svelte": "^1.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
     "astro": "^1.0.6",
     "autoprefixer": "^10.4.8",
     "eslint": "^8.22.0",
@@ -23,7 +26,10 @@
     "eslint-plugin-svelte3": "^4.0.0",
     "prettier": "~2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
-    "sass": "^1.54.4"
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-scss": "3",
+    "rollup-plugin-svelte": "^7.1.4",
+    "sass": "^1.62.1"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",

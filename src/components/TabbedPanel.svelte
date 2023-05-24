@@ -51,17 +51,23 @@
   export let playPauseApp;
   export let skipToPercentage;
   export let stopApp;
+  export let hideAdvancedSettings;
 
-  const panels = {
-    controls: {
+  let panels;
+
+  const controls = {
       component: BasicSettings,
       props: { skipToPercentage },
-      icon: "sliders",
-    },
-    settings: { component: AdvancedSettings, icon: "cog" },
-    audio: { component: AudioSettings, icon: "piano" },
-    midi: { component: MidiSettings, icon: "midi" },
-  };
+      icon: "sliders"
+    };
+  const settings =  { component: AdvancedSettings, icon: "cog" };
+  const audio = { component: AudioSettings, icon: "piano" };
+  const midi = { component: MidiSettings, icon: "midi" };
+  if (hideAdvancedSettings) {
+    panels = { controls };
+  } else  {
+    panels = { controls, settings, audio, midi };
+  }
 
   let selectedPanel = "controls";
 </script>
